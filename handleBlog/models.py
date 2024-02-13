@@ -6,7 +6,7 @@ class CustomUser(models.Model):
     user_id = models.AutoField(primary_key=True)
     userName = models.CharField(max_length=100)
     userEmail = models.EmailField()
-    userpassword = models.CharField(max_length=100)
+    userpassword = models.CharField(max_length=100)     
     userPhone = models.CharField(max_length=50)
     userAbout = models.TextField(max_length=1000)
 
