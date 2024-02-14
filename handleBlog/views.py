@@ -6,6 +6,31 @@ import datetime
 
 # Create your views here.
 
+# Admin = yudiz@gmail.com
+# pass = Rare9999
+
+
+def register(request):
+    if request.method == 'POST':
+
+        email = request.POST.get('email')
+
+        if CustomUser.objects.filter(userEmail=email).exists():
+            return HttpResponse("User Already Exists")
+
+        userName = request.POST.get('userName')
+        userEmail = request.POST.get('userEmail')
+        userPassword = request.POST.get('userPassword')
+        userPhone = request.POST.get('userPhone')
+        userAbout = request.POST.get('userAbout')
+
+        user = CustomUser(userName=userName, userEmail=userEmail, userPassword=userPassword, userPhone=userPhone, userAbout=userAbout)
+        user.save()
+        request.session['email'] = email
+        return redirect('login')
+    
+    return render(request,'register.html')
+
 def login(request):
     if request.method == 'POST':
         email = request.POST.get('email')
