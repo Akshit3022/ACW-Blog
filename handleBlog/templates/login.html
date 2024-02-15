@@ -27,10 +27,10 @@
         background: #6a11cb;
         
         /* Chrome 10-25, Safari 5.1-6 */
-        background: -webkit-linear-gradient(to right, rgb(17, 203, 116), rgb(37, 252, 73));
+        background: -webkit-linear-gradient(to right, #dce35b, #45b649);
         
         /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-        background: linear-gradient(to right, rgba(17, 203, 116), rgb(37, 252, 73))
+        background: linear-gradient(to right, #dce35b, #45b649)
         }
 </style>
 
@@ -45,22 +45,22 @@
                     <form action="{% url 'login' %}" method="post">
                         {% csrf_token %}
                         <div class="mb-md-5 mt-md-4 pb-5">
-      
+                          <h6 style="color:red">{{message}}</h6>  
                             <h2 class="fw-bold mb-2 text-uppercase">Login</h2>
                             <p class="text-white-50 mb-5">Please enter your login and password!</p>
               
                             <div class="form-floating form-white mb-4">
-                              <input name='email' type="email" id="typeEmailX" class="form-control form-control-lg" />
+                              <input name='userEmail' type="email" id="typeEmailX" class="form-control form-control-lg" />
                               <label class="form-label" for="typeEmailX">Email</label>
                             </div>
               
                             <div class="form-floating form-white mb-4">
-                              <input name='password' type="password" id="typePasswordX" class="form-control form-control-lg" />
+                              <input name='userPassword' type="password" id="typePasswordX" class="form-control form-control-lg" />
                               <label class="form-label" for="typePasswordX">Password</label>
                             </div>
                             
-                            <p class="small mb-4 pb-lg-2"><a class="text-white-50" href="#!">Forgot password?</a></p>
-              
+                            <p class="small mb-4 pb-lg-2"><a class="text-white-50" href="reset">Forgot password?</a></p>
+                            
                             <button class="btn btn-primary btn-lg gradient-custom" type="submit">Login</button>
               
                           </div>
@@ -76,10 +76,7 @@
         </div>
       </section>
       
-      <script
-      type="text/javascript"
-      src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.umd.min.js"
-      >
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.1.0/mdb.umd.min.js">
       </script>  
 </body>
 </html>
