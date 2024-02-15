@@ -128,9 +128,9 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Email
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_POST = 587
-# EMAIL_USE_TLS = True
-# ENAIL_HOST_USER = 'akshit.chauhan@yudiz.com'
-# EMAIL_HOST_PASSWORD = 'AkshitYudiz@123'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_POST = 587
+EMAIL_USE_TLS = True
+ENAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
