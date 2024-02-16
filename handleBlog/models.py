@@ -17,7 +17,7 @@ class Blog(models.Model):
     user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
     blog_id = models.AutoField(primary_key=True)
     blogTitle = models.CharField(max_length=100)
-    blogImage = models.ImageField()
+    blogImage = models.ImageField(upload_to="media")
     blogContent = models.TextField(max_length=10000) 
     blogDate = models.DateTimeField()
 

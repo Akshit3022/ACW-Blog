@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, HttpResponse
+from django.shortcuts import get_object_or_404, render, redirect, HttpResponse
 from . models import *
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password
@@ -37,6 +37,7 @@ def login(request):
         userPassword = request.POST.get('userPassword') 
 
         user = request.user
+        print('user',user)
 
         if CustomUser.objects.filter(userEmail=userEmail, userPassword=userPassword).exists():  
             request.session['email'] = userEmail
@@ -45,8 +46,6 @@ def login(request):
             request.session['email'] = userEmail
             return redirect('adminDash')
         else:
-            # global reset_email 
-            # reset_email = request.POST.get('userEmail')
             message = "Either Your Email Address or Password is incorrect...!!!"
             return render(request, "login.html", {'message':message})
                    
@@ -57,13 +56,10 @@ def changePass(request):
         oldPass = request.POST.get('oldPass')
         newPass = request.POST.get('newPass')
         confirmPass = request.POST.get('confirmPass')
-        
-
+    
         user = CustomUser.objects.get(userEmail=request.session['email'])
-        print("user.userPassword",user.userPassword)
+        
         if user and oldPass == user.userPassword:
-            # if check_password(oldPass, user.userPassword):
-            print("old",oldPass)
             if newPass == confirmPass:
                 user.userPassword = newPass
                 user.save()
@@ -78,8 +74,32 @@ def changePass(request):
     return render(request, 'login.html')
 
 def reset(request):
-    # email = reset_email
     return render(request, 'reset.html')
 
 def home(request):
     return render(request, 'home.html')
+
+def blog(request):
+    blogs = Blog.objects.all()
+    return render(request, 'blog.html', {'blogs':blogs})
+
+def addContent(request):
+    if request.method == 'POST':
+        date = datetime.date.today()
+        blogTitle = request.POST.get('blogTitle')
+        blogContent = request.POST.get('blogContent')
+        blogImage = request.POST.get('blogImage')
+
+        obj = CustomUser.objects.get(userEmail=request.session['email'])
+        user_instance = get_object_or_404(CustomUser, user_id=obj.user_id)
+
+        obj = Blog.objects.create(user_id=user_instance, blogDate=date, blogTitle=blogTitle, blogContent=blogContent, blogImage=blogImage)
+        obj.save()
+        
+        return redirect('blog')
+
+    return render(request, 'content.html')
+
+def author(request):
+    authors = CustomUser.objects.all()
+    return render(request, 'author.html', {'authors': authors})
