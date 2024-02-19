@@ -3,6 +3,7 @@ from . models import *
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password
 import datetime
+from django.core.files.storage import FileSystemStorage
 
 # Create your views here.
 
@@ -84,18 +85,22 @@ def blog(request):
     return render(request, 'blog.html', {'blogs':blogs})
 
 def addContent(request):
-    if request.method == 'POST':
+    if request.method == 'POST':    
         date = datetime.date.today()
         blogTitle = request.POST.get('blogTitle')
         blogContent = request.POST.get('blogContent')
-        blogImage = request.POST.get('blogImage')
+        blogImage = request.FILES.get('blogImage')
 
         obj = CustomUser.objects.get(userEmail=request.session['email'])
         user_instance = get_object_or_404(CustomUser, user_id=obj.user_id)
 
         obj = Blog.objects.create(user_id=user_instance, blogDate=date, blogTitle=blogTitle, blogContent=blogContent, blogImage=blogImage)
+        fs = FileSystemStorage()
+        filename = fs.save(blogImage.name, blogImage)
+        uploaded_img_url = fs.url(filename)
+        obj.blogImage = uploaded_img_url
         obj.save()
-        
+
         return redirect('blog')
 
     return render(request, 'content.html')

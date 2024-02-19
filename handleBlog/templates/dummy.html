@@ -1,0 +1,11 @@
+if img is not None:
+            book = BookDetails(book_code=code, book_name=name, book_type=type, author_name=author, price=price, quantity=qnty, book_img=img)
+            if book:
+                # Save the uploaded image to a file storage
+                fs = FileSystemStorage()
+                filename = fs.save(img.name, img)
+                uploaded_img_url = fs.url(filename)
+                book.book_img = uploaded_img_url
+                book.save()
+                messages.success(request, "Book added Successfully!")
+                return redirect('add_book')

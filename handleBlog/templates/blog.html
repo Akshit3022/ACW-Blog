@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -84,7 +86,6 @@
     
       {% for field in blogs %}
       <div class="container py-3">
-        <!-- <div class="title h1 text-center text-white">Pour Your Thoughts Here</div> -->
         <div class="card">
           <div class="row ">
       
@@ -101,15 +102,9 @@
             </div>
        
             <div class="col-md-5">
-              <div id="CarouselTest" class="carousel slide" data-ride="carousel">
-                <ol class="carousel-indicators">
-                  <li data-target="#CarouselTest"></li>
-                </ol>
-                {{field.blogImage.url}}
-                <div class="carousel-inner">
-                  <div class="carousel-item active">
-                    <img src="{{field.blogImage.url}}" alt="image" class="img-fluid" style="height: 300px; width: 300px;">
-                  </div>             
+
+                <div>
+                    <img src="{{ field.blogImage.url }}" alt="image" class="img-fluid" style="height: 300px; width: 300px;">
                 </div>
 
               </div>
