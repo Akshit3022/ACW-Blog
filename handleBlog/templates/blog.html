@@ -104,14 +104,50 @@
             <div class="col-md-5">
 
                 <div>
-                    <img src="{{ field.blogImage.url }}" alt="image" class="img-fluid" style="height: 300px; width: 300px;">
+                    <img src="{{ field.blogImage }}" alt="image" class="img-fluid" style="width:100%; height:100%; border-radius: 7px;">
                 </div>
 
+            </div>
+
+            </div>
+            
+            <div class="col-md-7 px-3">
+              <div class="card-block px-6">
+              <form action="{% url 'addComment' pk=field.blog_id %}" method="post">
+                {% csrf_token%}
+                <h4 class="card-title">Comments</h4>
+                  <div class="form-floating w-100">
+                    <textarea class="form-control" name='commentContent' id="textAreaExample" rows="4" style="background: #fff;"></textarea>
+                    <label class="form-label" for="textAreaExample">Message</label>
+                  </div>
+
+                  <div class="float-end mt-2 mb-2 pt-1">
+                    <button type="submit" class="btn btn-primary btn-sm gradient-custom">Post comment</button>
+                  </div>
+              </form>
               </div>
             </div>
+
+            {% for field in comments %}
+            <div class="card-block px-6 ">
+
+              <div class="d-flex justify-content-between align-items-center font-bold">
+                <p class="mb-1">
+                  {{field.commentersName}} <span class="small">{{field.commentDate}}</span>
+                </p>
+              </div>
+
+              <p class="small mb-0">
+                {{field.commentContent}}
+              </p>
+
+            </div>
+            {% endfor %}
+
           </div>
         </div>
         {% endfor %}
+
 </body>
 </html>
 

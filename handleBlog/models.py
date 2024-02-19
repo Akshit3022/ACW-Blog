@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.timezone import now
 
 # Create your models here.
 
@@ -10,29 +11,30 @@ class CustomUser(models.Model):
     userPhone = models.CharField(max_length=50)
     userAbout = models.TextField(max_length=1000)
 
-    def __str__(self):
-        return self.userName
+    # def __str__(self):
+    #     return str(self.userName)
     
 class Blog(models.Model):
     user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
-    blog_id = models.AutoField(primary_key=True)
+    blog_id = models.AutoField(primary_key=True)    
     blogTitle = models.CharField(max_length=100)
     blogImage = models.ImageField(upload_to="images/")
     blogContent = models.TextField(max_length=10000) 
     blogDate = models.DateTimeField()
 
-    def __str__(self):
-        return self.blogTitle
+    # def __str__(self):
+    #     return self.blogTitle
 
 class Comment(models.Model):
     user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
     blog_id = models.ForeignKey(Blog, on_delete=models.CASCADE, null=True)
     comment_id = models.AutoField(primary_key=True)
+    commentersName = models.CharField(max_length=100, null=True)
     commentContent = models.TextField(max_length=300)
-    commentDate = models.DateTimeField()
+    commentDate = models.DateTimeField(default=now)
 
-    def __str__(self):
-        return self.user_id
+    # def __str__(self):
+    #     return self.user_id
     
 class Rating(models.Model):
     user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
@@ -40,5 +42,5 @@ class Rating(models.Model):
     rating_id = models.AutoField(primary_key=True)
     ratingValue = models.FloatField(null=True)
 
-    def __str__(self):
-        return self.user_id
+    # def __str__(self):
+    #     return self.user_id 

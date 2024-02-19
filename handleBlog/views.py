@@ -82,7 +82,8 @@ def home(request):
 
 def blog(request):
     blogs = Blog.objects.all()
-    return render(request, 'blog.html', {'blogs':blogs})
+    comments = Comment.objects.all()
+    return render(request, 'blog.html', {'blogs':blogs, 'comments':comments})
 
 def addContent(request):
     if request.method == 'POST':    
@@ -90,6 +91,7 @@ def addContent(request):
         blogTitle = request.POST.get('blogTitle')
         blogContent = request.POST.get('blogContent')
         blogImage = request.FILES.get('blogImage')
+        print('blog Image ',blogImage)
 
         obj = CustomUser.objects.get(userEmail=request.session['email'])
         user_instance = get_object_or_404(CustomUser, user_id=obj.user_id)
@@ -104,6 +106,22 @@ def addContent(request):
         return redirect('blog')
 
     return render(request, 'content.html')
+
+def addComment(request, pk):
+    if request.method == 'POST':    
+        
+        commentContent = request.POST.get('commentContent')
+
+        obj = CustomUser.objects.get(userEmail=request.session['email'])       
+        
+        user_instance = get_object_or_404(CustomUser, user_id=obj.user_id)
+        blog_instance = get_object_or_404(Blog, blog_id=pk)
+
+        obj = Comment.objects.create(blog_id=blog_instance, user_id=user_instance, commentersName=obj.userName, commentContent=commentContent)
+
+        return redirect('blog')
+
+    return render(request, 'blog.html')
 
 def author(request):
     authors = CustomUser.objects.all()

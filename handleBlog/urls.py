@@ -14,6 +14,7 @@ urlpatterns = [
     path('blog', views.blog, name='blog'),
     path('author', views.author, name='author'),
     path('content', views.addContent, name='content'),
+    path('addComment/<int:pk>/', views.addComment, name='addComment'),
 
     path('resetPassword/', auth_views.PasswordResetView.as_view(template_name='resetPassword.html'), name='resetPassword'),
     path('resetPasswordDone/', auth_views.PasswordResetDoneView.as_view(template_name='resetPasswordDone.html'), name='resetPasswordDone'),
