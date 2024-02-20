@@ -43,4 +43,4 @@ class Rating(models.Model):
     ratingValue = models.FloatField(null=True)
 
     # def __str__(self):
-    #     return self.user_id 
+    #     return self.user_id

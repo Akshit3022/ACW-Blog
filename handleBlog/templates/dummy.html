@@ -1,11 +1,41 @@
-if img is not None:
-            book = BookDetails(book_code=code, book_name=name, book_type=type, author_name=author, price=price, quantity=qnty, book_img=img)
-            if book:
-                # Save the uploaded image to a file storage
-                fs = FileSystemStorage()
-                filename = fs.save(img.name, img)
-                uploaded_img_url = fs.url(filename)
-                book.book_img = uploaded_img_url
-                book.save()
-                messages.success(request, "Book added Successfully!")
-                return redirect('add_book')
+Certainly, we can adjust the `home` function to fetch comments for each blog individually. Here's an updated version of the `home` function that retrieves both blogs and their associated comments:
+
+python
+def home(request):
+    blogs = Blog.objects.all()
+
+    # Create a dictionary to store comments for each blog
+    blog_comments = {}
+    for blog in blogs:
+        # Get comments related to the current blog
+        comments = Comment.objects.filter(blog_id=blog.blog_id)
+        # Store comments in the dictionary with blog_id as key
+        blog_comments[blog.blog_i] = commentsd
+
+    return render(request, 'home.html', {'blogs': blogs, 'blog_comments': blog_comments})
+
+
+Then, in your template, you can iterate over both `blogs` and `blog_comments` to display the blogs along with their respective comments:
+
+html
+{% for field in blogs %}
+    <!-- Display blog content -->
+    <!-- Your existing blog display code -->
+
+    <!-- Display comments for this specific blog -->
+    {% for comment in blog_comments[field.blog_id] %}
+        <div class="card-block px-6 ">
+            <div class="d-flex justify-content-between align-items-center font-bold">
+                <p class="mb-1">
+                    {{ comment.commentersName }} <span class="small">{{ comment.commentDate }}</span>
+                </p>
+            </div>
+            <p class="small mb-0">
+                {{ comment.commentContent }}
+            </p>
+        </div>
+    {% endfor %}
+{% endfor %}
+
+
+This approach ensures that comments are fetched specifically for each blog post and displayed accordingly. Make sure to adjust your template accordingly.

@@ -85,11 +85,11 @@
               <a class="nav-link text-white mx-3" href="{% url 'content' %}">Add Content</a>
             </li> 
             <li class="nav-item">
-              <a class="nav-link text-white mx-3" href="{% url 'author' %}">Author</a>
-            </li> 
-            <li class="nav-item">
               <a class="nav-link text-white mx-3" href="{% url 'changePass' %}">Change Password</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link text-white mx-3" href="{% url 'logout' %}">Log out</a>
+              </li>
           </ul>
         </div>
       </nav>
@@ -128,7 +128,7 @@
                 {% csrf_token%}
                 <h4 class="card-title">Comments</h4>
                   <div class="form-floating w-100">
-                    <textarea class="form-control" name='commentContent' id="textAreaExample" rows="4" style="background: #fff;"></textarea>
+                    <textarea class="form-control" name='commentContent' id="textAreaExample" rows="4" style="background: #fff;" required></textarea>
                     <label class="form-label" for="textAreaExample">Message</label>
                   </div>
 
@@ -139,26 +139,24 @@
               </div>
             </div>
 
-            {% for field in comments %}
+            {% for comment in comments %}
+            {% if comment.blog_id == field.blog_id %}
             <div class="card-block px-6 ">
-
-              <div class="d-flex justify-content-between align-items-center font-bold">
-                <p class="mb-1">
-                  {{field.commentersName}} <span class="small">{{field.commentDate}}</span>
+                <div class="d-flex justify-content-between align-items-center font-bold">
+                    <p class="mb-1">
+                        {{ comment.commentersName }} <span class="small">{{ comment.commentDate }}</span>
+                    </p>
+                </div>
+                <p class="small mb-0">
+                    {{ comment.commentContent }}
                 </p>
-              </div>
-
-              <p class="small mb-0">
-                {{field.commentContent}}
-              </p>
-
             </div>
+            {% endif %}
             {% endfor %}
 
           </div>
         </div>
         {% endfor %}
-
 </body>
 </html>
 

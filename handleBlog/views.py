@@ -56,6 +56,23 @@ def login(request):
     return render(request, 'login.html')
 
 
+def adminDash(request):
+    blogs = Blog.objects.all()
+    comments = Comment.objects.all()
+    return render(request, 'adminDash.html' ,{'blogs':blogs, 'comments':comments})
+
+
+def handleUser(request):
+
+    authors = CustomUser.objects.all()
+    return render(request, 'handleUser.html', {'authors': authors})
+
+
+def userDeactivate(request, id):
+    user = CustomUser.objects.filter(user_id=id)
+    user.delete()
+    return redirect(handleUser)
+
 def home(request):
 
     blogs = Blog.objects.all()
@@ -70,6 +87,7 @@ def myBlog(request):
 
     myblogs = Blog.objects.filter(user_id=user_instance)
     return render(request,'myBlog.html', {'myblogs':myblogs})
+
 
 def addContent(request):
 
@@ -93,12 +111,6 @@ def addContent(request):
         return redirect('home')
 
     return render(request, 'content.html')
-
-
-def author(request):
-
-    authors = CustomUser.objects.all()
-    return render(request, 'author.html', {'authors': authors})
 
 
 def changePass(request):
@@ -143,9 +155,15 @@ def addComment(request, pk):
         # print("BI ",blog_instance)
 
         obj = Comment.objects.create(blog_id=blog_instance, user_id=user_instance, commentersName=obj.userName, commentContent=commentContent)
-        obj.save()
 
         return redirect('home')
+    
+    blog_instance = get_object_or_404(Blog, blog_id=pk)
+    comments = Comment.objects.filter(blog_id=blog_instance)
 
-    return render(request, 'home.html')
+    return render(request, 'home.html', {'blog_instance': blog_instance, 'comments': comments})
 
+
+def logout(request):
+    del request.session['email']
+    return redirect('login')
