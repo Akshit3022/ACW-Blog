@@ -56,93 +56,71 @@
       .btn {
         margin-top: auto;
       }
+
+      h1,
+      .navbar-brand,
+      .navbar-nav a {
+        font-family: 'Gill Sans', sans-serif;
+      }
+
+     
       
 </style>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#"> Just Blog it</a>
+    <nav class="navbar navbar-expand-lg navbar-dark p-5 gradient-custom pb-2 pt-3">
+        <a class="navbar-brand text-white mx-4" href="#">Just Blog it  </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarText">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-              <a class="nav-link" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
+              <a class="nav-link text-white mx-3" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'blog' %}">Blog</a>
+              <a class="nav-link text-white mx-3" href="{% url 'myBlog' %}">My Blog</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{% url 'content' %}">Your Content</a>
-              </li>
+              <a class="nav-link text-white mx-3" href="{% url 'content' %}">Add Content</a>
+            </li> 
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'author' %}">Author</a>
+              <a class="nav-link text-white mx-3" href="{% url 'author' %}">Author</a>
+            </li> 
+            <li class="nav-item">
+              <a class="nav-link text-white mx-3" href="{% url 'changePass' %}">Change Password</a>
             </li>
           </ul>
         </div>
       </nav>
 
     
-      {% for field in blogs %}
+      {% for field in myblogs %}
       <div class="container py-3">
         <div class="card">
           <div class="row ">
       
             <div class="col-md-7 px-3">
-              <div class="card-block px-6">
-                <p class="card-text">{{ field.blogDate }}</p>
-                <i class="fa fa-quote-left text-black"></i>
-                
-                <h4 class="card-title">{{field.blogTitle}}</h4>
-                <p class="card-text">
-                    {{field.blogContent}}
-                </p>
-              </div>
-            </div>
-       
-            <div class="col-md-5">
-
-                <div>
-                    <img src="{{ field.blogImage }}" alt="image" class="img-fluid" style="width:100%; height:100%; border-radius: 7px;">
+                <div class="card-block px-6">
+                    <p class="card-text">{{ field.blogDate }}</p>
+                    <i class="fa fa-quote-left text-black"></i>
+                    
+                    <h4 class="card-title">{{field.blogTitle}}</h4>
+                    <p class="card-text">
+                        {{field.blogContent}}
+                    </p>
                 </div>
-
-            </div>
-
+                </div>
+        
+                <div class="col-md-5">
+                    <div>
+                        <img src="{{ field.blogImage }}" alt="image" class="img-fluid" style="width:100%; height:100%; border-radius: 7px;">
+                    </div>
+                </div>
             </div>
             
             <div class="col-md-7 px-3">
-              <div class="card-block px-6">
-              <form action="{% url 'addComment' pk=field.blog_id %}" method="post">
-                {% csrf_token%}
-                <h4 class="card-title">Comments</h4>
-                  <div class="form-floating w-100">
-                    <textarea class="form-control" name='commentContent' id="textAreaExample" rows="4" style="background: #fff;"></textarea>
-                    <label class="form-label" for="textAreaExample">Message</label>
-                  </div>
-
-                  <div class="float-end mt-2 mb-2 pt-1">
-                    <button type="submit" class="btn btn-primary btn-sm gradient-custom">Post comment</button>
-                  </div>
-              </form>
-              </div>
             </div>
-
-            {% for field in comments %}
-            <div class="card-block px-6 ">
-
-              <div class="d-flex justify-content-between align-items-center font-bold">
-                <p class="mb-1">
-                  {{field.commentersName}} <span class="small">{{field.commentDate}}</span>
-                </p>
-              </div>
-
-              <p class="small mb-0">
-                {{field.commentContent}}
-              </p>
-
-            </div>
-            {% endfor %}
 
           </div>
         </div>

@@ -12,6 +12,7 @@ from django.core.files.storage import FileSystemStorage
 
 
 def register(request):
+
     if request.method == 'POST':
 
         email = request.POST.get('email')
@@ -32,7 +33,9 @@ def register(request):
     
     return render(request,'register.html')
 
+
 def login(request):
+
     if request.method == 'POST':
         userEmail = request.POST.get('userEmail')
         userPassword = request.POST.get('userPassword') 
@@ -52,40 +55,24 @@ def login(request):
                    
     return render(request, 'login.html')
 
-def changePass(request):
-    if request.method == 'POST':
-        oldPass = request.POST.get('oldPass')
-        newPass = request.POST.get('newPass')
-        confirmPass = request.POST.get('confirmPass')
-    
-        user = CustomUser.objects.get(userEmail=request.session['email'])
-        
-        if user and oldPass == user.userPassword:
-            if newPass == confirmPass:
-                user.userPassword = newPass
-                user.save()
-                return redirect('login')
-            else:
-                message = "New Passwords do not match...!!!"
-                return render(request, "home.html", {'message':message})
-        else:
-            message = "Old Passwords do not match...!!!"
-            return render(request, "home.html", {'message':message})
-
-    return render(request, 'login.html')
-
-def reset(request):
-    return render(request, 'reset.html')
 
 def home(request):
-    return render(request, 'home.html')
 
-def blog(request):
     blogs = Blog.objects.all()
     comments = Comment.objects.all()
-    return render(request, 'blog.html', {'blogs':blogs, 'comments':comments})
+    return render(request, 'home.html', {'blogs':blogs, 'comments':comments})
+
+
+def myBlog(request):
+
+    users = CustomUser.objects.get(userEmail=request.session['email'])
+    user_instance = get_object_or_404(CustomUser, user_id = users.user_id)
+
+    myblogs = Blog.objects.filter(user_id=user_instance)
+    return render(request,'myBlog.html', {'myblogs':myblogs})
 
 def addContent(request):
+
     if request.method == 'POST':    
         date = datetime.date.today()
         blogTitle = request.POST.get('blogTitle')
@@ -103,26 +90,62 @@ def addContent(request):
         obj.blogImage = uploaded_img_url
         obj.save()
 
-        return redirect('blog')
+        return redirect('home')
 
     return render(request, 'content.html')
 
+
+def author(request):
+
+    authors = CustomUser.objects.all()
+    return render(request, 'author.html', {'authors': authors})
+
+
+def changePass(request):
+
+    if request.method == 'POST':
+        oldPass = request.POST.get('oldPass')
+        newPass = request.POST.get('newPass')
+        confirmPass = request.POST.get('confirmPass')
+    
+        user = CustomUser.objects.get(userEmail=request.session['email'])
+        
+        if user and oldPass == user.userPassword:
+            if newPass == confirmPass:
+                user.userPassword = newPass
+                user.save()
+                return redirect('login')
+            else:
+                message = "New Passwords do not match...!!!"
+                return render(request, "changePass.html", {'message':message})
+        else:
+            message = "Old Passwords do not match...!!!"
+            return render(request, "changePass.html", {'message':message})
+
+    return render(request, 'changePass.html')
+
+
+def reset(request):
+
+    return render(request, 'reset.html')
+
+
 def addComment(request, pk):
+
     if request.method == 'POST':    
         
         commentContent = request.POST.get('commentContent')
 
         obj = CustomUser.objects.get(userEmail=request.session['email'])       
-        
+        # print(pk)
         user_instance = get_object_or_404(CustomUser, user_id=obj.user_id)
         blog_instance = get_object_or_404(Blog, blog_id=pk)
+        # print("BI ",blog_instance)
 
         obj = Comment.objects.create(blog_id=blog_instance, user_id=user_instance, commentersName=obj.userName, commentContent=commentContent)
+        obj.save()
 
-        return redirect('blog')
+        return redirect('home')
 
-    return render(request, 'blog.html')
+    return render(request, 'home.html')
 
-def author(request):
-    authors = CustomUser.objects.all()
-    return render(request, 'author.html', {'authors': authors})
