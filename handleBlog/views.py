@@ -4,6 +4,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password
 import datetime
 from django.core.files.storage import FileSystemStorage
+from .handleEmail import sendForgetPassMail
+import uuid
+
 
 # Create your views here.
 
@@ -41,7 +44,7 @@ def login(request):
         userPassword = request.POST.get('userPassword') 
 
         user = request.user
-        print('user',user)
+        # print('user',user)
 
         if CustomUser.objects.filter(userEmail=userEmail, userPassword=userPassword).exists():  
             request.session['email'] = userEmail
@@ -96,7 +99,7 @@ def addContent(request):
         blogTitle = request.POST.get('blogTitle')
         blogContent = request.POST.get('blogContent')
         blogImage = request.FILES.get('blogImage')
-        print('blog Image ',blogImage)
+        # print('blog Image ',blogImage)
 
         obj = CustomUser.objects.get(userEmail=request.session['email'])
         user_instance = get_object_or_404(CustomUser, user_id=obj.user_id)
@@ -137,9 +140,35 @@ def changePass(request):
     return render(request, 'changePass.html')
 
 
-def reset(request):
+def forgetPass(request):
 
-    return render(request, 'reset.html')
+    if request.method == 'POST':
+        userEmail = request.POST.get('userEmail')
+
+        user = CustomUser.objects.get(userEmail=userEmail)
+
+        if user:
+            token = str(uuid.uuid4())
+            print("token", token)
+            sendForgetPassMail(user.userEmail, token)
+            message = "An Email is Sent."
+            return render(request, "forgetPass.html", {'message':message, 'token':token})
+        else:
+            message = "User does not exist...!!!"
+            return render(request, "forgetPass.html", {'message':message})  
+        
+    return render(request, 'forgetPass.html')
+
+
+def resetPass(request, token):
+    context = {}
+    try:
+        user = CustomUser.objects.get(forgetPassToken = token)
+        print(user)
+    except Exception as e:
+        print(e)
+    return render(request, 'resetPass.html')
+
 
 
 def addComment(request, pk):
