@@ -8,7 +8,7 @@ class CustomUser(models.Model):
     userName = models.CharField(max_length=100)
     userEmail = models.EmailField()
     userPassword = models.CharField(max_length=100)     
-    userPhone = models.CharField(max_length=50)
+    userPhone = models.CharField(max_length=10)
     userAbout = models.TextField(max_length=1000)
     forgetPassToken = models.CharField(max_length=100, null=True)
 
