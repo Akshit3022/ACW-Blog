@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render, redirect, HttpResponse
 from . models import *
 from django.contrib.auth.models import User
 # from django.contrib.auth.decorators import login_required
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.hashers import make_password, check_password, BCryptPasswordHasher
 import datetime
 from django.core.files.storage import FileSystemStorage
 from .handleEmail import sendForgetPassMail
@@ -32,9 +32,9 @@ def register(request):
         userPhone = request.POST.get('userPhone')
         userAbout = request.POST.get('userAbout')
 
-        # hashedPassword = make_password(userPassword)
+        hashedPassword = make_password(userPassword)
 
-        user = CustomUser.objects.create(userName=userName, userEmail=userEmail, userPassword=userPassword, userPhone=userPhone, userAbout=userAbout)
+        user = CustomUser.objects.create(userName=userName, userEmail=userEmail, userPassword=hashedPassword, userPhone=userPhone, userAbout=userAbout)
         user.save()
         return redirect('login')
     
@@ -47,10 +47,11 @@ def login(request):
         userEmail = request.POST.get('userEmail')
         userPassword = request.POST.get('userPassword') 
 
-        user = request.user
-        # print('user',user)
+        encryptedpassword=make_password(userPassword)
 
-        if CustomUser.objects.filter(userEmail=userEmail, userPassword=userPassword).exists():  
+        user = request.user
+
+        if CustomUser.objects.filter(userEmail=userEmail).exists() and check_password(userPassword, encryptedpassword):  
             request.session['email'] = userEmail
             return redirect('home')
         elif User.objects.filter(email=user.email).exists() and check_password(userPassword, request.user.password):
