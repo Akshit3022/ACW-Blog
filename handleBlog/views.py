@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render, redirect, HttpResponse
 from . models import *
 from django.contrib.auth.models import User
 # from django.contrib.auth.decorators import login_required
-from django.contrib.auth.hashers import make_password, check_password, BCryptPasswordHasher
+from django.contrib.auth.hashers import make_password, check_password
 import datetime
 from django.core.files.storage import FileSystemStorage
 from .handleEmail import sendForgetPassMail
@@ -10,11 +10,10 @@ import uuid
 
 
 
-
 # Create your views here.
 
 # Admin = yudiz@gmail.com
-# pass = Rare9999
+# pass = Rare9999   
 
 
 def register(request):
@@ -47,11 +46,11 @@ def login(request):
         userEmail = request.POST.get('userEmail')
         userPassword = request.POST.get('userPassword') 
 
-        encryptedpassword=make_password(userPassword)
+        loginUser = CustomUser.objects.get(userEmail=userEmail)
 
         user = request.user
 
-        if CustomUser.objects.filter(userEmail=userEmail).exists() and check_password(userPassword, encryptedpassword):  
+        if CustomUser.objects.filter(userEmail=userEmail).exists() and check_password(userPassword, loginUser.userPassword):  
             request.session['email'] = userEmail
             return redirect('home')
         elif User.objects.filter(email=user.email).exists() and check_password(userPassword, request.user.password):
@@ -98,6 +97,10 @@ def home(request):
     if user_email:
         blogs = Blog.objects.all()
         comments = Comment.objects.all()
+        # print("Hello", comments)
+        # print("Comment", comments.blog_id.blog_id)
+        for i in comments:
+            print("comment id: ", i.blog_id.blog_id)
         return render(request, 'home.html', {'blogs':blogs, 'comments':comments})
     else:
         return redirect('login')
@@ -156,9 +159,9 @@ def changePass(request):
         
             user = CustomUser.objects.get(userEmail=request.session['email'])
             
-            if user and oldPass == user.userPassword:
+            if user and check_password(oldPass, user.userPassword):
                 if newPass == confirmPass:
-                    user.userPassword = newPass
+                    user.userPassword = make_password(newPass)
                     user.save()
                     return redirect('login')
                 else:
@@ -222,13 +225,13 @@ def addComment(request, pk):
             commentContent = request.POST.get('commentContent')
 
             obj = CustomUser.objects.get(userEmail=request.session['email'])       
-            # print(pk)
+            print(pk)
             user_instance = get_object_or_404(CustomUser, user_id=obj.user_id)
             blog_instance = get_object_or_404(Blog, blog_id=pk)
-            # print("BI ",blog_instance)
+            print("BI ",blog_instance)
 
-            obj = Comment.objects.create(blog_id=blog_instance, user_id=user_instance, commentersName=obj.userName, commentContent=commentContent)
-
+            comments = Comment.objects.create(blog_id=blog_instance, user_id=user_instance, commentersName=obj.userName, commentContent=commentContent)
+            comments.save() 
             return redirect('home')
         
         blog_instance = get_object_or_404(Blog, blog_id=pk)

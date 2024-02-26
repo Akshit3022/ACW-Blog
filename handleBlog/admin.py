@@ -8,7 +8,7 @@ class CustomUserModelAdmin(admin.ModelAdmin):
 admin.site.register(CustomUser, CustomUserModelAdmin)
 
 class BlogModelAdmin(admin.ModelAdmin):
-    list_display = ["user_id", "blogTitle", "blogDate"]
+    list_display = ["user_id","blog_id", "blogTitle", "blogDate"]
 admin.site.register(Blog, BlogModelAdmin)
 
 class CommentModelAdmin(admin.ModelAdmin):

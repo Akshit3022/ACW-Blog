@@ -3,7 +3,7 @@ from django.utils.timezone import now
 
 # Create your models here.
 
-class CustomUser(models.Model):
+class CustomUser(models.Model):    
     user_id = models.AutoField(primary_key=True)
     userName = models.CharField(max_length=100)
     userEmail = models.EmailField()

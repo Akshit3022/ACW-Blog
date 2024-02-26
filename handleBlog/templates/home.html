@@ -91,7 +91,7 @@
               <a class="nav-link text-white mx-3" href="{% url 'content' %}">Add Content</a>
             </li> 
             <li class="nav-item">
-              <a class="nav-link text-white mx-3" href="{% url 'changePass' %}">Change Password</a>
+              <a class="nav-link text-white mx-3" href="{% url 'changePass' %}">Change Password </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-white mx-3" href="{% url 'logout' %}">Log out</a>
@@ -101,19 +101,21 @@
       </nav>
 
     
-      {% for field in blogs %}
+      {% for blog in blogs %}
       <div class="container py-3">
         <div class="card">
           <div class="row ">
       
             <div class="col-md-7 px-3">
               <div class="card-block px-6">
-                <p class="card-text">{{ field.blogDate }}</p>
+                <h4 class="card-title">{{blog.user_id.userName}}</h4>
+
+                <p class="card-text">{{ blog.blogDate }}</p>
                 <i class="fa fa-quote-left text-black"></i>
                 
-                <h4 class="card-title">{{field.blogTitle}}</h4>
+                <h4 class="card-title">{{blog.blogTitle}}</h4>
                 <p class="card-text">
-                    {{field.blogContent}}
+                    {{blog.blogContent}}
                 </p>
               </div>
             </div>
@@ -121,7 +123,7 @@
             <div class="col-md-5">
 
                 <div>
-                    <img src="{{ field.blogImage }}" alt="image" class="img-fluid" style="width:100%; height:100%; border-radius: 7px;">
+                    <img src="{{ blog.blogImage }}" alt="image" class="img-fluid" style="width:100%; height:100%; border-radius: 7px;">
                 </div>
 
             </div>
@@ -130,9 +132,9 @@
             
             <div class="col-md-7 px-3">
               <div class="card-block px-6">
-              <form action="{% url 'addComment' pk=field.blog_id %}" method="post">
+              <form action="{% url 'addComment' pk=blog.blog_id %}" method="post">
                 {% csrf_token%}
-                <h4 class="card-title">Comments</h4>
+                <h5 class="card-title">Comments</h5>
                   <div class="form-floating w-100">
                     <textarea class="form-control" name='commentContent' id="textAreaExample" rows="4" style="background: #fff;" required></textarea>
                     <label class="form-label" for="textAreaExample">Message</label>
@@ -145,20 +147,6 @@
               </div>
             </div>
 
-            {% for comment in comments %}
-            {% if comment.blog_id == field.blog_id %}
-            <div class="card-block px-6 ">
-                <div class="d-flex justify-content-between align-items-center font-bold">
-                    <p class="mb-1">
-                        {{ comment.commentersName }} <span class="small">{{ comment.commentDate }}</span>
-                    </p>
-                </div>
-                <p class="small mb-0">
-                    {{ comment.commentContent }}
-                </p>
-            </div>
-            {% endif %}
-            {% endfor %}
             <div class="container-wrapper card-block px-6 ">  
               <div class="container d-flex font-bold">
                 <div class="row justify-content-left">    
@@ -209,15 +197,29 @@
                     $("#rating-star-"+ix).toggleClass('btn-warning');
                     $("#rating-star-"+ix).toggleClass('btn-default');
                     }
-                    
+            
                     }));
-                    
                       
                   });
                   </script>
                 </div>
               </div>
             </div>
+
+            {% for comment in comments %}
+            {% if comment.blog_id.blog_id == blog.blog_id %}
+            <div class="card-block px-6 ">
+                <div class="d-flex justify-content-between align-items-center font-bold">
+                    <p class="mb-1">
+                        {{ comment.commentersName }} <span class="small">{{ comment.commentDate }}</span>
+                    </p>
+                </div>
+                <p class="small mb-0">
+                    {{ comment.commentContent }}
+                </p>
+              </div>
+              {% endif %}
+            {% endfor %}
                       
           </div>
         </div>
