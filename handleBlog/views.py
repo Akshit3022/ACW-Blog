@@ -30,35 +30,48 @@ def register(request):
         userPassword = request.POST.get('userPassword')
         userPhone = request.POST.get('userPhone')
         userAbout = request.POST.get('userAbout')
+        userImage = request.FILES.get('userImage')
+        print('user Image ',userImage)
 
         hashedPassword = make_password(userPassword)
 
-        user = CustomUser.objects.create(userName=userName, userEmail=userEmail, userPassword=hashedPassword, userPhone=userPhone, userAbout=userAbout)
-        user.save()
-        return redirect('login')
+        users = CustomUser.objects.create(userName=userName, userEmail=userEmail, userPassword=hashedPassword, userPhone=userPhone, userAbout=userAbout, userImage=userImage)
+        fs = FileSystemStorage()
+        filename = fs.save(userImage.name, userImage)   
+        uploaded_img_url = fs.url(filename)
+        users.userImage = uploaded_img_url
+        users.save()
+        return redirect('login')    
     
     return render(request,'register.html')
 
 
 def login(request):
 
-    if request.method == 'POST':
+    if request.method == 'POST':    
         userEmail = request.POST.get('userEmail')
         userPassword = request.POST.get('userPassword') 
 
-        loginUser = CustomUser.objects.get(userEmail=userEmail)
+        try:
+            loginUser = CustomUser.objects.get(userEmail=userEmail)
+        except Exception as e:
+            loginUser = None
 
         user = request.user
 
-        if CustomUser.objects.filter(userEmail=userEmail).exists() and check_password(userPassword, loginUser.userPassword):  
+        if CustomUser.objects.filter(userEmail=userEmail).exists() and check_password(userPassword, loginUser.userPassword) and loginUser.is_active == True:  
             request.session['email'] = userEmail
             return redirect('home')
         elif User.objects.filter(email=user.email).exists() and check_password(userPassword, request.user.password):
             request.session['email'] = user.email
             return redirect('adminDash')
         else:
-            message = "Either Your Email Address or Password is incorrect...!!!"
-            return render(request, "login.html", {'message':message})
+            if loginUser.is_active == False:
+                message = "You are De-activated..!!"
+                return render(request, "login.html", {'message':message})
+            else:
+                message = "Either Your Email Address or Password is incorrect...!!!"
+                return render(request, "login.html", {'message':message})
                    
     return render(request, 'login.html')
 
@@ -86,8 +99,15 @@ def handleUser(request):
 
 # @login_required
 def userDeactivate(request, id):
-    user = CustomUser.objects.filter(user_id=id)
-    user.delete()
+    user = get_object_or_404(CustomUser, user_id=id)
+    user.is_active = False
+    user.save()
+    return redirect(handleUser)
+
+def userActivate(request, id):
+    user = get_object_or_404(CustomUser, user_id=id)
+    user.is_active = True
+    user.save()
     return redirect(handleUser)
 
 
@@ -95,13 +115,11 @@ def userDeactivate(request, id):
 def home(request):
     user_email = request.session.get('email')
     if user_email:
+        users = CustomUser.objects.all()
         blogs = Blog.objects.all()
         comments = Comment.objects.all()
-        # print("Hello", comments)
-        # print("Comment", comments.blog_id.blog_id)
-        for i in comments:
-            print("comment id: ", i.blog_id.blog_id)
-        return render(request, 'home.html', {'blogs':blogs, 'comments':comments})
+        ratings = Rating.objects.all()
+        return render(request, 'home.html', {'blogs':blogs, 'comments':comments, 'ratings':ratings, 'users':users})
     else:
         return redirect('login')
 
@@ -114,7 +132,8 @@ def myBlog(request):
         user_instance = get_object_or_404(CustomUser, user_id = users.user_id)
 
         myblogs = Blog.objects.filter(user_id=user_instance)
-        return render(request,'myBlog.html', {'myblogs':myblogs})
+        loggedUser = CustomUser.objects.all()
+        return render(request,'myBlog.html', {'myblogs':myblogs, 'loggedUser':loggedUser})
     else:
         return redirect('login')
 
@@ -128,7 +147,7 @@ def addContent(request):
             blogTitle = request.POST.get('blogTitle')
             blogContent = request.POST.get('blogContent')
             blogImage = request.FILES.get('blogImage')
-            # print('blog Image ',blogImage)
+            print('blog Image ',blogImage)
 
             obj = CustomUser.objects.get(userEmail=request.session['email'])
             user_instance = get_object_or_404(CustomUser, user_id=obj.user_id)
@@ -141,8 +160,8 @@ def addContent(request):
             obj.save()
 
             return redirect('home')
-
-        return render(request, 'content.html')
+        users = CustomUser.objects.all()
+        return render(request, 'content.html', {'users': users})
     else:
         return redirect('login')
 
@@ -170,8 +189,8 @@ def changePass(request):
             else:
                 message = "Old Passwords do not match...!!!"
                 return render(request, "changePass.html", {'message':message})
-
-        return render(request, 'changePass.html')
+        users = CustomUser.objects.all()
+        return render(request, 'changePass.html', {'users':users})
     else:
         return redirect('login')
 
@@ -242,7 +261,31 @@ def addComment(request, pk):
         return redirect('login')
 
 
+def addRating(request, pk):
+    user_email = request.session.get('email')
+    if user_email:
+        if request.method == 'POST':
+
+            ratingValue = request.POST.get('ratingValue')
+            print("Rating Value", ratingValue)
+        
+            obj = CustomUser.objects.get(userEmail=request.session['email'])
+            user_instance = get_object_or_404(CustomUser, user_id=obj.user_id)
+            blog_instance = get_object_or_404(Blog, blog_id=pk)
+            print("BI ",blog_instance)
+
+            ratings = Rating.objects.create(blog_id=blog_instance, user_id=user_instance, ratingValue=ratingValue)
+            ratings.save() 
+            return redirect('home')
+    else:
+        return redirect('login')     
+
+
 # @login_required
 def logout(request):
     del request.session['email']
     return redirect('login')
+
+def profile(request):
+    users = CustomUser.objects.all()
+    return render(request, 'profile.html', {'users': users})

@@ -97,6 +97,22 @@
               </li>
           </ul>
         </div>
+        <div class="d-flex align-items-center">
+            {% for user in users %}
+              {% if user.userEmail == request.session.email %}
+                <a href="{% url 'profile' %}">
+                  <img
+                  src="{{ user.userImage }}"
+                  class="rounded-circle"
+                  height="45"
+                  width="48"
+                  alt="User Image"
+                  loading="lazy"
+                  />
+                </a>  
+              {% endif %}
+            {% endfor %}
+          </div>
       </nav>
 
     <div class="container-fluid px-1 py-5 mx-auto">

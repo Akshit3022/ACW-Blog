@@ -4,7 +4,7 @@ from . models import *
 
 # Register your models here.
 class CustomUserModelAdmin(admin.ModelAdmin):
-    list_display = ["user_id", "userName", "userEmail", "userPassword"]
+    list_display = ["user_id", "userName", "userEmail", "userPassword", "userImage", "is_active"]
 admin.site.register(CustomUser, CustomUserModelAdmin)
 
 class BlogModelAdmin(admin.ModelAdmin):

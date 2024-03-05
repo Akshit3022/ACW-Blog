@@ -76,8 +76,11 @@
                                         <!-- <td>{{ user.userEmail }}</td> -->
                                         <td>{{ user.userAbout }}</td>
                                         <td>
-                                            <button class="btn btn-primary btn-lg gradient-custom" type="button" >
+                                            <button class="btn btn-danger" type="button" >
                                                 <a style="color: white;" href="{% url 'userDeactivate' user.user_id %}">Deactivate</a>
+                                            </button>
+                                            <button class="btn btn-primary" type="button" >
+                                                <a style="color: white;" href="{% url 'userActivate' user.user_id %}">Activate</a>
                                             </button>
                                         </td>
                                         

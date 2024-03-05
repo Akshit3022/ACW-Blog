@@ -98,6 +98,22 @@
               </li>
           </ul>
         </div>
+        <div class="d-flex align-items-center">
+          {% for user in users %}
+            {% if user.userEmail == request.session.email %}
+              <a href="{% url 'profile' %}">
+                <img
+                src="{{ user.userImage }}"
+                class="rounded-circle"
+                height="45"
+                width="48"
+                alt="User Image"
+                loading="lazy"
+                />
+              </a>  
+            {% endif %}
+          {% endfor %}
+        </div>
       </nav>
 
     
@@ -107,10 +123,13 @@
           <div class="row ">
       
             <div class="col-md-7 px-3">
+              <button type="submit" class="btn gradient-custom mt-2 text-white mb-2 "><h6>Follow</h6></button>
               <div class="card-block px-6">
-                <h4 class="card-title">{{blog.user_id.userName}}</h4>
+                <h3 class="card-title">{{blog.user_id.userName}}</h3> 
 
                 <p class="card-text">{{ blog.blogDate }}</p>
+
+
                 <i class="fa fa-quote-left text-black"></i>
                 
                 <h4 class="card-title">{{blog.blogTitle}}</h4>
@@ -150,32 +169,34 @@
             <div class="container-wrapper card-block px-6 ">  
               <div class="container d-flex font-bold">
                 <div class="row justify-content-left">    
-                  
-                  <div class="form-group" id="rating-ability-wrapper">
-                    <label class="control-label" for="rating">
-                    <span class="field-label-header">How would you rate this blog?</span><br>
-                    <span class="field-label-info"></span>
-                    <input type="hidden" id="selected_rating" name="selected_rating" value="" required="required">
-                    </label>
-                    <h2 class="bold rating-header">
-                    <span class="selected-rating">0</span><small> / 5</small>
-                    </h2>
-                    <button type="button" class="btnrating btn btn-default btn-lg" data-attr="1" id="rating-star-1">
-                        <i class="fa fa-star" aria-hidden="true"></i>
-                    </button>
-                    <button type="button" class="btnrating btn btn-default btn-lg" data-attr="2" id="rating-star-2">
-                        <i class="fa fa-star" aria-hidden="true"></i>
-                    </button>
-                    <button type="button" class="btnrating btn btn-default btn-lg" data-attr="3" id="rating-star-3">
-                        <i class="fa fa-star" aria-hidden="true"></i>
-                    </button>
-                    <button type="button" class="btnrating btn btn-default btn-lg" data-attr="4" id="rating-star-4">
-                        <i class="fa fa-star" aria-hidden="true"></i>
-                    </button>
-                    <button type="button" class="btnrating btn btn-default btn-lg" data-attr="5" id="rating-star-5">
-                        <i class="fa fa-star" aria-hidden="true"></i>
-                    </button>
-                </div>
+                  <form action="{% url 'addRating' pk=blog.blog_id %}" method="post">
+                    {% csrf_token%}
+                    <div class="form-group" id="rating-ability-wrapper">
+                      <label class="control-label" for="rating">
+                      <span class="field-label-header">How would you rate this blog?</span><br>
+                      <span class="field-label-info"></span>
+                      <input type="hidden" id="selected_rating" name="ratingValue" value="" required="required">
+                      </label>
+                      <h2 class="bold rating-header">
+                      <span class="selected-rating">0</span><small> / 5</small>
+                      </h2>
+                      <button type="submit" class="btnrating btn btn-default btn-lg" data-attr="1" id="rating-star-1">
+                          <i class="fa fa-star" aria-hidden="true"></i>
+                      </button>
+                      <button type="submit" class="btnrating btn btn-default btn-lg" data-attr="2" id="rating-star-2">
+                          <i class="fa fa-star" aria-hidden="true"></i>
+                      </button>
+                      <button type="submit" class="btnrating btn btn-default btn-lg" data-attr="3" id="rating-star-3">
+                          <i class="fa fa-star" aria-hidden="true"></i>
+                      </button>
+                      <button type="submit" class="btnrating btn btn-default btn-lg" data-attr="4" id="rating-star-4">
+                          <i class="fa fa-star" aria-hidden="true"></i>
+                      </button>
+                      <button type="submit" class="btnrating btn btn-default btn-lg" data-attr="5" id="rating-star-5">
+                          <i class="fa fa-star" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                  </form>
                   <script>	jQuery(document).ready(function($){
 	    
                     $(".btnrating").on('click',(function(e) {
@@ -220,10 +241,26 @@
               </div>
               {% endif %}
             {% endfor %}
+
+            {% for rating in ratings %}
+            {% if rating.blog_id.blog_id == blog.blog_id %}
+            <div class="card-block px-6 ">
+              <div class="d-flex justify-content-between align-items-center font-bold">
+                  <h6 class="mb-1">
+                    {{ rating.user_id.userName }}
+                  </h6>
+                  <p class="mb-1">
+                      {{ rating.ratingValue }} Stars
+                  </p>
+              </div>  
+            </div>
+            {% endif %}
+            {% endfor %}
                       
           </div>
         </div>
         {% endfor %}
+
 </body>
 </html>
 

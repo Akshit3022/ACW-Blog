@@ -15,10 +15,13 @@ urlpatterns = [
     path('adminDash', views.adminDash, name='adminDash'),
     path('handleUser', views.handleUser, name='handleUser'),
     path('userDeactivate/<int:id>/', views.userDeactivate, name='userDeactivate'),
+    path('userActivate/<int:id>/', views.userActivate, name='userActivate'),
     path('home', views.home, name='home'),
     path('myBlog', views.myBlog, name='myBlog'),
     path('changePass', views.changePass, name='changePass'),
     path('content', views.addContent, name='content'),
+    path('profile', views.profile, name='profile'),
     path('addComment/<int:pk>/', views.addComment, name='addComment'),
+    path('addRating/<int:pk>/', views.addRating, name='addRating'),
 
 ]+static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -10,7 +10,9 @@ class CustomUser(models.Model):
     userPassword = models.CharField(max_length=100)     
     userPhone = models.CharField(max_length=10)
     userAbout = models.TextField(max_length=1000)
+    userImage = models.ImageField(upload_to="images/")
     forgetPassToken = models.CharField(max_length=100, null=True)
+    is_active = models.BooleanField(default=True)
 
     
 class Blog(models.Model):
@@ -35,4 +37,4 @@ class Rating(models.Model):
     user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
     blog_id = models.ForeignKey(Blog, on_delete=models.CASCADE, null=True)
     rating_id = models.AutoField(primary_key=True)
-    ratingValue = models.FloatField(null=True)
+    ratingValue = models.IntegerField(default=0)
