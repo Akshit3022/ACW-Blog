@@ -21,6 +21,10 @@ urlpatterns = [
     path('changePass', views.changePass, name='changePass'),
     path('content', views.addContent, name='content'),
     path('profile', views.profile, name='profile'),
+    path('profile/list/', views.profile_list, name='profile_list'),
+    path('profile/detail/<int:user_id>/', views.profile_detail, name='profile_detail'),
+    path('follow/<int:user_id>/', views.follow, name='follow'),
+    path('unfollow/<int:user_id>/', views.unfollow, name='unfollow'),
     path('addComment/<int:pk>/', views.addComment, name='addComment'),
     path('addRating/<int:pk>/', views.addRating, name='addRating'),
 

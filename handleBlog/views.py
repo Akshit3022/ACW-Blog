@@ -1,3 +1,4 @@
+from pyexpat.errors import messages
 from django.shortcuts import get_object_or_404, render, redirect, HttpResponse
 from . models import *
 from django.contrib.auth.models import User
@@ -224,7 +225,7 @@ def forgetPass(request):
 def resetPass(request, token):
     user_email = request.session.get('email')
     if user_email:
-        context = {}
+        # context = {}
         try:
             user = CustomUser.objects.get(forgetPassToken = token)
             print(user)
@@ -289,3 +290,30 @@ def logout(request):
 def profile(request):
     users = CustomUser.objects.all()
     return render(request, 'profile.html', {'users': users})
+
+def profile_list(request):
+    user_email = request.session.get('email')
+    if user_email:
+        profiles = UserProfile.objects.all()
+        return render(request, 'profile_list.html', {"profiles": profiles})
+    else:
+        messages.success(request, "You Must Be Logged In To View This Page...")
+        return redirect('home')
+
+def profile_detail(request, user_id):
+    user_profile = UserProfile.objects.get(user_id=user_id)
+    return render(request, 'profile_detail.html', {"profile": user_profile})
+
+def follow(request, user_id):
+    if request.method == 'POST':
+        user_to_follow = CustomUser.objects.get(user_id=user_id)
+        user_profile = UserProfile.objects.get(user=request.user)
+        user_profile.following.add(user_to_follow)
+        return redirect('profile_list')
+
+def unfollow(request, user_id):
+    if request.method == 'POST':
+        user_to_unfollow = CustomUser.objects.get(user_id=user_id)
+        user_profile = UserProfile.objects.get(user=request.user)
+        user_profile.following.remove(user_to_unfollow)
+        return redirect('profile_list') 

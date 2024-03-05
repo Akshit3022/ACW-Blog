@@ -38,3 +38,9 @@ class Rating(models.Model):
     blog_id = models.ForeignKey(Blog, on_delete=models.CASCADE, null=True)
     rating_id = models.AutoField(primary_key=True)
     ratingValue = models.IntegerField(default=0)
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    followers = models.ManyToManyField(CustomUser, related_name='followers')
+    following = models.ManyToManyField(CustomUser, related_name='following')

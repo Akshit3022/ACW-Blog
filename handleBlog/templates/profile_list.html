@@ -1,0 +1,21 @@
+{% extends 'home.html' %}
+
+{% block content %}
+    <h1>Profile List</h1>
+    <br/>
+
+    {% if profiles %}
+        {% for profile in profiles %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ profile.user.userName }}</h5>
+                    <p class="card-text"><a href="{% url 'profile_detail' profile.user_id %}">@{{ profile.user.userName|lower }}</a></p>
+                    <form action="{% url 'follow' profile.user_id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">Follow</button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

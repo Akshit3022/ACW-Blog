@@ -1,0 +1,10 @@
+{% extends 'home.html' %}
+
+{% block content %}
+    <h1>{{ profile.user.userName }}'s Profile</h1>
+    <p>{{ profile.user.userAbout }}</p>
+    <form action="{% url 'follow' profile.user_id %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Follow</button>
+    </form>
+{% endblock %}
