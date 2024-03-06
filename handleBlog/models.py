@@ -42,5 +42,5 @@ class Rating(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    followers = models.ManyToManyField(CustomUser, related_name='followers')
-    following = models.ManyToManyField(CustomUser, related_name='following')
+    followers = models.ManyToManyField(CustomUser, related_name='following_users', blank=True)
+    following = models.ManyToManyField(CustomUser, related_name='followers_users', blank=True)

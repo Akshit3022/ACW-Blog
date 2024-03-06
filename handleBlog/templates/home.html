@@ -94,9 +94,6 @@
               <a class="nav-link text-white mx-3" href="{% url 'changePass' %}">Change Password </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-white mx-3" href="{% url 'profile_list' %}">Profile list</a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link text-white mx-3" href="{% url 'logout' %}">Log out</a>
               </li>
           </ul>
@@ -124,9 +121,13 @@
       <div class="container py-3">
         <div class="card">
           <div class="row ">
-      
             <div class="col-md-7 px-3">
-              <button type="submit" class="btn gradient-custom mt-2 text-white mb-2 "><h6>Follow</h6></button>
+      
+               <form action="{% url 'profile_detail' blog.user_id.user_id %}" method="post">
+                 {% csrf_token %}
+                 <button type="submit" class="btn gradient-custom mt-2 text-white mb-2 "><h6>About</h6></button>
+               </form>
+
               <div class="card-block px-6">
                 <h3 class="card-title">{{blog.user_id.userName}}</h3> 
 
@@ -178,29 +179,30 @@
                       <label class="control-label" for="rating">
                       <span class="field-label-header">How would you rate this blog?</span><br>
                       <span class="field-label-info"></span>
-                      <input type="hidden" id="selected_rating" name="ratingValue" value="" required="required">
+                      <input type="hidden" id="selected_rating"  required="required">
                       </label>
                       <h2 class="bold rating-header">
                       <span class="selected-rating">0</span><small> / 5</small>
                       </h2>
-                      <button type="submit" class="btnrating btn btn-default btn-lg" data-attr="1" id="rating-star-1">
+                      <button type="submit" class="btnrating btn btn-default btn-lg" name="ratingValue" value="1" data-attr="1" id="rating-star-1">
                           <i class="fa fa-star" aria-hidden="true"></i>
                       </button>
-                      <button type="submit" class="btnrating btn btn-default btn-lg" data-attr="2" id="rating-star-2">
+                      <button type="submit" class="btnrating btn btn-default btn-lg" name="ratingValue" value="2" data-attr="2" id="rating-star-2">
                           <i class="fa fa-star" aria-hidden="true"></i>
                       </button>
-                      <button type="submit" class="btnrating btn btn-default btn-lg" data-attr="3" id="rating-star-3">
+                      <button type="submit" class="btnrating btn btn-default btn-lg" name="ratingValue" value="3" data-attr="3" id="rating-star-3">
                           <i class="fa fa-star" aria-hidden="true"></i>
                       </button>
-                      <button type="submit" class="btnrating btn btn-default btn-lg" data-attr="4" id="rating-star-4">
+                      <button type="submit" class="btnrating btn btn-default btn-lg" name="ratingValue" value="4" data-attr="4" id="rating-star-4">
                           <i class="fa fa-star" aria-hidden="true"></i>
                       </button>
-                      <button type="submit" class="btnrating btn btn-default btn-lg" data-attr="5" id="rating-star-5">
+                      <button type="submit" class="btnrating btn btn-default btn-lg" name="ratingValue" value="5" data-attr="5" id="rating-star-5">
                           <i class="fa fa-star" aria-hidden="true"></i>
                       </button>
                     </div>
                   </form>
-                  <script>	jQuery(document).ready(function($){
+                  <script>	
+                    jQuery(document).ready(function($){
 	    
                     $(".btnrating").on('click',(function(e) {
                     

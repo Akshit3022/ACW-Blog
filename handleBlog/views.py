@@ -291,29 +291,22 @@ def profile(request):
     users = CustomUser.objects.all()
     return render(request, 'profile.html', {'users': users})
 
-def profile_list(request):
-    user_email = request.session.get('email')
-    if user_email:
-        profiles = UserProfile.objects.all()
-        return render(request, 'profile_list.html', {"profiles": profiles})
-    else:
-        messages.success(request, "You Must Be Logged In To View This Page...")
-        return redirect('home')
 
 def profile_detail(request, user_id):
-    user_profile = UserProfile.objects.get(user_id=user_id)
-    return render(request, 'profile_detail.html', {"profile": user_profile})
+    users = CustomUser.objects.filter(user_id=user_id)
+    profiles = UserProfile.objects.all()
+    return render(request, 'profile_detail.html', {"users": users, 'profiles': profiles, 'user_id': user_id})
+
 
 def follow(request, user_id):
     if request.method == 'POST':
-        user_to_follow = CustomUser.objects.get(user_id=user_id)
-        user_profile = UserProfile.objects.get(user=request.user)
-        user_profile.following.add(user_to_follow)
-        return redirect('profile_list')
+        user_to_follow = CustomUser.objects.get(pk=user_id)
+        request.user.userprofile.following.add(user_to_follow)
+        return redirect('profile_detail', user_id=user_id)
+    
 
 def unfollow(request, user_id):
     if request.method == 'POST':
-        user_to_unfollow = CustomUser.objects.get(user_id=user_id)
-        user_profile = UserProfile.objects.get(user=request.user)
-        user_profile.following.remove(user_to_unfollow)
-        return redirect('profile_list') 
+        user_to_unfollow = CustomUser.objects.get(pk=user_id)
+        request.user.userprofile.following.remove(user_to_unfollow)
+        return redirect('profile_detail', user_id=user_id)
