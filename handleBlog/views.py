@@ -299,19 +299,28 @@ def profile(request):
 #     return render(request, 'profile_detail.html', {"users": users,'user_id': user_id})
 
 def profile_detail(request, user_id):
+    user_email = request.session.get('email')
+    if user_email:
     # user = get_object_or_404(CustomUser, user_id=user_id)
     # followers = user.userprofile.followers.all()
     # is_following = user_id in request.user.userprofile.followers.values_list('user_id', flat=True)
     # return render(request, 'profile_detail.html', {'user': user, 'followers': followers, 'is_following': is_following})
-    user = CustomUser.objects.filter(user_id=user_id)
-    return render(request, 'profile_detail.html', {'user': user})
+        user = CustomUser.objects.filter(user_id=user_id)
+        loggedUser = CustomUser.objects.filter(userEmail=user_email)
+        user_profile = UserProfile.objects.all()
+        print("user",user_profile)
+        return render(request, 'profile_detail.html', {'user': user, 'user_profile':user_profile, 'loggedUser':loggedUser})
+    else:
+        return redirect('login')
 
 def follow(request, user_id):
     user_email = request.session.get('email')
     if request.method == 'POST' and user_email:
         user_to_follow = get_object_or_404(CustomUser, user_id=user_id)
-        user_profile, _ = UserProfile.objects.get_or_create(user=request.user)
-        user_profile.followers.add(user_to_follow)
+        following_user = get_object_or_404(CustomUser, userEmail=user_email)
+        user_profile, _ = UserProfile.objects.get_or_create(user=user_to_follow)
+        # print("user_profile", user_profile.user.user_id)
+        user_profile.followers.add(following_user)
         return redirect('profile_detail', user_id=user_id)
     else:
         return redirect('login')
@@ -320,8 +329,9 @@ def unfollow(request, user_id):
     user_email = request.session.get('email')
     if request.method == 'POST' and user_email:
         user_to_unfollow = get_object_or_404(CustomUser, user_id=user_id)
-        user_profile, _ = UserProfile.objects.get_or_create(user=request.user)
-        user_profile.followers.remove(user_to_unfollow)
+        following_user = get_object_or_404(CustomUser, userEmail=user_email)
+        user_profile, _ = UserProfile.objects.get_or_create(user=user_to_unfollow)
+        user_profile.followers.remove(following_user)
         return redirect('profile_detail', user_id=user_id)
     else:
         return redirect('login')

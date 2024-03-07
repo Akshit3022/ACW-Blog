@@ -115,7 +115,7 @@
       </nav>
       
       <section class="vh-100" style="background-color:gradient-custom">
-          {% for user in users %}
+          {% for user in user %}
       
               <div class="container py-5 h-100">
                 <div class="row d-flex justify-content-center align-items-center h-100">
@@ -147,18 +147,14 @@
                               </div>
                             </div>
                             <div class="d-flex pt-1">
-
-                                {% if user.user_id != request.user.user_id %}
                                   <form action="{% url 'follow' user.user_id %}" method="post">
                                       {% csrf_token %}
-                                      {% if user.user_id in request.user.userprofile.followers.all %}
+                                      {% if user.user_id in  user.followers%}
                                           <button type="submit" class="btn btn-danger">Unfollow</button>
                                       {% else %}
                                           <button type="submit" class="btn btn-primary">Follow</button>
                                       {% endif %}
-                                  </form>
-                                {% endif %}
-                                
+                                  </form>                       
                               <!-- <button type="button" class="btn btn-primary flex-grow-1">Follow</button> -->
                             </div>
                           </div>
