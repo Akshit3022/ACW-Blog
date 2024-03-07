@@ -13,9 +13,8 @@
 </head>
 <style>
     .gradient-custom {
-        background: #6a11cb;
-      background: -webkit-linear-gradient(to right, #62cff4, #2c67f2);
-      background: linear-gradient(to right, #62cff4, #2c67f2)
+        background: #E30B5C;  
+      
     }
     h1,
       .navbar-brand,
@@ -76,12 +75,15 @@
                                         <!-- <td>{{ user.userEmail }}</td> -->
                                         <td>{{ user.userAbout }}</td>
                                         <td>
-                                            <button class="btn btn-danger" type="button" >
+                                            {% if user.is_active == True %}
+                                            <button class="btn btn-danger" style="background-color: #E30B5C;" type="button" >
                                                 <a style="color: white;" href="{% url 'userDeactivate' user.user_id %}">Deactivate</a>
                                             </button>
+                                            {% else %}
                                             <button class="btn btn-primary" type="button" >
                                                 <a style="color: white;" href="{% url 'userActivate' user.user_id %}">Activate</a>
                                             </button>
+                                            {% endif %}
                                         </td>
                                         
                                     </tr>

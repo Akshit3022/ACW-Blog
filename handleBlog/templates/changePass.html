@@ -14,8 +14,8 @@
 <style>
     .gradient-custom {
       background: #6a11cb;
-      background: -webkit-linear-gradient(to right, #cb356b, #bd3f32);
-      background: linear-gradient(to right, #cb356b, #bd3f32)
+      background: -webkit-linear-gradient(to right, #ff0000, #ff00ba);
+      background: linear-gradient(to right, #ff0000, #ff00ba)
     }
     h1,
       .navbar-brand,
@@ -24,29 +24,28 @@
       }
 </style>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-dark p-5 gradient-custom pb-2 pt-3">
-    <a class="navbar-brand text-white mx-4" href="#"> Just Blog it</a>
+  <nav class="navbar navbar-expand-lg navbar-dark p-5 bg-light pb-2 pt-3">
+    <a class="navbar-brand text-black mx-4" href="#">Just Blog it  </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarText">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
-          <a class="nav-link text-white mx-3" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
+          <a class="nav-link text-black mx-3" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white mx-3" href="{% url 'myBlog' %}">My Blog</a>
+          <a class="nav-link text-black mx-3" href="{% url 'myBlog' %}">My Blog</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white mx-3" href="{% url 'content' %}">Add Content</a>
+          <a class="nav-link text-black mx-3" href="{% url 'content' %}">Add Content</a>
         </li> 
-
         <li class="nav-item">
-          <a class="nav-link text-white mx-3" href="{% url 'changePass' %}">Change Password</a>
+          <a class="nav-link text-black mx-3" href="{% url 'changePass' %}">Change Password </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link text-white mx-3" href="{% url 'logout' %}">Log out</a>
-        </li>
+            <a class="nav-link text-black mx-3" href="{% url 'logout' %}">Log out</a>
+          </li>
       </ul>
     </div>
     <div class="d-flex align-items-center">

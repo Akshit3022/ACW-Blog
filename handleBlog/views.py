@@ -10,7 +10,6 @@ from .handleEmail import sendForgetPassMail
 import uuid
 
 
-
 # Create your views here.
 
 # Admin = yudiz@gmail.com
@@ -117,7 +116,9 @@ def home(request):
     user_email = request.session.get('email')
     if user_email:
         users = CustomUser.objects.all()
-        blogs = Blog.objects.all()
+        logged_in_user = CustomUser.objects.get(userEmail=user_email)       
+        # blogs = Blog.objects.all()
+        blogs = Blog.objects.exclude(user_id=logged_in_user)
         comments = Comment.objects.all()
         ratings = Rating.objects.all()
         return render(request, 'home.html', {'blogs':blogs, 'comments':comments, 'ratings':ratings, 'users':users})
@@ -250,14 +251,13 @@ def addComment(request, pk):
             blog_instance = get_object_or_404(Blog, blog_id=pk)
             print("BI ",blog_instance)
 
-            comments = Comment.objects.create(blog_id=blog_instance, user_id=user_instance, commentersName=obj.userName, commentContent=commentContent)
-            comments.save() 
-            return redirect('home')
+            if user_instance.userEmail != blog_instance.user_id.userEmail:
+                comments = Comment.objects.create(blog_id=blog_instance, user_id=user_instance, commentersName=obj.userName, commentContent=commentContent)
+                comments.save() 
+                return redirect('home')
+            else:
+                return redirect('home')
         
-        blog_instance = get_object_or_404(Blog, blog_id=pk)
-        comments = Comment.objects.filter(blog_id=blog_instance)
-
-        return render(request, 'home.html', {'blog_instance': blog_instance, 'comments': comments})
     else:
         return redirect('login')
 
@@ -266,7 +266,7 @@ def addRating(request, pk):
     user_email = request.session.get('email')
     if user_email:
         if request.method == 'POST':
-
+            
             ratingValue = request.POST.get('ratingValue')
             print("Rating Value", ratingValue)
         
@@ -274,10 +274,11 @@ def addRating(request, pk):
             user_instance = get_object_or_404(CustomUser, user_id=obj.user_id)
             blog_instance = get_object_or_404(Blog, blog_id=pk)
             print("BI ",blog_instance)
-
-            ratings = Rating.objects.create(blog_id=blog_instance, user_id=user_instance, ratingValue=ratingValue)
-            ratings.save() 
-            return redirect('home')
+            if user_instance.userEmail != blog_instance.user_id.userEmail:
+                Rating.objects.update_or_create(blog_id=blog_instance, user_id=user_instance, defaults={'ratingValue': ratingValue})
+                return redirect('home')
+            else:
+                return redirect('home')
     else:
         return redirect('login')     
 
@@ -292,21 +293,35 @@ def profile(request):
     return render(request, 'profile.html', {'users': users})
 
 
-def profile_detail(request, user_id):
-    users = CustomUser.objects.filter(user_id=user_id)
-    profiles = UserProfile.objects.all()
-    return render(request, 'profile_detail.html', {"users": users, 'profiles': profiles, 'user_id': user_id})
+# def profile_detail(request, user_id):
+#     users = CustomUser.objects.filter(user_id=user_id)
 
+#     return render(request, 'profile_detail.html', {"users": users,'user_id': user_id})
+
+def profile_detail(request, user_id):
+    # user = get_object_or_404(CustomUser, user_id=user_id)
+    # followers = user.userprofile.followers.all()
+    # is_following = user_id in request.user.userprofile.followers.values_list('user_id', flat=True)
+    # return render(request, 'profile_detail.html', {'user': user, 'followers': followers, 'is_following': is_following})
+    user = CustomUser.objects.filter(user_id=user_id)
+    return render(request, 'profile_detail.html', {'user': user})
 
 def follow(request, user_id):
-    if request.method == 'POST':
-        user_to_follow = CustomUser.objects.get(pk=user_id)
-        request.user.userprofile.following.add(user_to_follow)
+    user_email = request.session.get('email')
+    if request.method == 'POST' and user_email:
+        user_to_follow = get_object_or_404(CustomUser, user_id=user_id)
+        user_profile, _ = UserProfile.objects.get_or_create(user=request.user)
+        user_profile.followers.add(user_to_follow)
         return redirect('profile_detail', user_id=user_id)
-    
+    else:
+        return redirect('login')
 
 def unfollow(request, user_id):
-    if request.method == 'POST':
-        user_to_unfollow = CustomUser.objects.get(pk=user_id)
-        request.user.userprofile.following.remove(user_to_unfollow)
+    user_email = request.session.get('email')
+    if request.method == 'POST' and user_email:
+        user_to_unfollow = get_object_or_404(CustomUser, user_id=user_id)
+        user_profile, _ = UserProfile.objects.get_or_create(user=request.user)
+        user_profile.followers.remove(user_to_unfollow)
         return redirect('profile_detail', user_id=user_id)
+    else:
+        return redirect('login')

@@ -14,6 +14,7 @@ class CustomUser(models.Model):
     forgetPassToken = models.CharField(max_length=100, null=True)
     is_active = models.BooleanField(default=True)
 
+
     
 class Blog(models.Model):
     user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
@@ -40,7 +41,17 @@ class Rating(models.Model):
     ratingValue = models.IntegerField(default=0)
 
 
+# class UserProfile(models.Model):
+#     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+#     followers = models.ManyToManyField(CustomUser, related_name='following_users', blank=True)
+#     following = models.ManyToManyField(CustomUser, related_name='followers_users', blank=True)
+
+
+# class Follow(models.Model):
+
+#     follower = models.ForeignKey(CustomUser,related_name='user_followers',on_delete=models.CASCADE)
+#     following = models.ForeignKey(CustomUser,related_name='user_follows',on_delete=models.CASCADE)
+
 class UserProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    followers = models.ManyToManyField(CustomUser, related_name='following_users', blank=True)
-    following = models.ManyToManyField(CustomUser, related_name='followers_users', blank=True)
+    followers = models.ManyToManyField(CustomUser, related_name='following', blank=True)
