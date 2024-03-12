@@ -138,7 +138,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'rarerabbit747@gmail.com'
-EMAIL_HOST_PASSWORD = 'wdrk zwrp wdzm jzld'
+EMAIL_HOST_PASSWORD = 'RARE9999'
 # DEFAULT_FROM_EMAIL = 'your_email@example.com'
 
 

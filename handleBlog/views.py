@@ -1,3 +1,4 @@
+from audioop import avg
 from pyexpat.errors import messages
 from django.shortcuts import get_object_or_404, render, redirect, HttpResponse
 from . models import *
@@ -200,26 +201,23 @@ def changePass(request):
 # @login_required
 def forgetPass(request):
 
-    user_email = request.session.get('email')
-    if user_email:
-        if request.method == 'POST':
-            userEmail = request.POST.get('userEmail')
+    if request.method == 'POST':
+        userEmail = request.POST.get('userEmail')
 
-            user = CustomUser.objects.get(userEmail=userEmail)
+        user = CustomUser.objects.get(userEmail=userEmail)
 
-            if user:
-                token = str(uuid.uuid4())
-                print("token", token)
-                sendForgetPassMail(user.userEmail, token)
-                message = "An Email is Sent."
-                return render(request, "forgetPass.html", {'message':message, 'token':token})
-            else:
-                message = "User does not exist...!!!"
-                return render(request, "forgetPass.html", {'message':message})  
-            
-        return render(request, 'forgetPass.html')
-    else:
-        return redirect('login')
+        if user:
+            token = str(uuid.uuid4())
+            print("token", token)
+            sendForgetPassMail(user.userEmail, token)
+            message = "An Email is Sent."
+            return render(request, "forgetPass.html", {'message':message, 'token':token})
+        else:
+            message = "User does not exist...!!!"
+            return render(request, "forgetPass.html", {'message':message})  
+        
+    return render(request, 'forgetPass.html')
+
 
 
 # @login_required
@@ -289,27 +287,51 @@ def logout(request):
     return redirect('login')
 
 def profile(request):
-    users = CustomUser.objects.all()
-    return render(request, 'profile.html', {'users': users})
+    user_email = request.session.get('email')
+    if user_email:
+        users = CustomUser.objects.filter(userEmail=user_email)
+        user = get_object_or_404(CustomUser, userEmail=user_email)
+        user_profile = get_object_or_404(UserProfile, user=user)
+        followers_count = user_profile.followers.count()
 
+        avg_rating = Rating.objects.filter(blog_id__user_id=user)
+        j=0
+        count = 0
+        for i in avg_rating:
+            j = j + i.ratingValue
+            count += 1 
+        if count != 0: 
+            x = j/count
+        else:
+            x=0
+        avg = round(x, 2)
 
-# def profile_detail(request, user_id):
-#     users = CustomUser.objects.filter(user_id=user_id)
+        return render(request, 'profile.html', {'users': users, 'followers_count':followers_count, 'avg':avg })
+    else:
+        return redirect('login')
 
-#     return render(request, 'profile_detail.html', {"users": users,'user_id': user_id})
 
 def profile_detail(request, user_id):
     user_email = request.session.get('email')
     if user_email:
-    # user = get_object_or_404(CustomUser, user_id=user_id)
-    # followers = user.userprofile.followers.all()
-    # is_following = user_id in request.user.userprofile.followers.values_list('user_id', flat=True)
-    # return render(request, 'profile_detail.html', {'user': user, 'followers': followers, 'is_following': is_following})
-        user = CustomUser.objects.filter(user_id=user_id)
-        loggedUser = CustomUser.objects.filter(userEmail=user_email)
-        user_profile = UserProfile.objects.all()
-        print("user",user_profile)
-        return render(request, 'profile_detail.html', {'user': user, 'user_profile':user_profile, 'loggedUser':loggedUser})
+        users = CustomUser.objects.filter(user_id=user_id)  
+        loggedUser = CustomUser.objects.filter(userEmail=user_email).first()
+        user = get_object_or_404(CustomUser, user_id=user_id)  
+        user_profile, created = UserProfile.objects.get_or_create(user=user)
+        followers_count = user_profile.followers.count()
+        avg_rating = Rating.objects.filter(blog_id__user_id=user)
+        j=0
+        count = 0
+        for i in avg_rating:
+            j = j + i.ratingValue
+            count += 1 
+        if count != 0: 
+            x = j/count
+        else:
+            x=0
+        avg = round(x, 2)
+
+        return render(request, 'profile_detail.html', {'users': users, 'user_profile':user_profile, 'loggedUser':loggedUser, 'followers_count':followers_count, 'avg':avg })
     else:
         return redirect('login')
 
@@ -319,7 +341,6 @@ def follow(request, user_id):
         user_to_follow = get_object_or_404(CustomUser, user_id=user_id)
         following_user = get_object_or_404(CustomUser, userEmail=user_email)
         user_profile, _ = UserProfile.objects.get_or_create(user=user_to_follow)
-        # print("user_profile", user_profile.user.user_id)
         user_profile.followers.add(following_user)
         return redirect('profile_detail', user_id=user_id)
     else:

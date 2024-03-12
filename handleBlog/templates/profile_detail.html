@@ -16,14 +16,14 @@
 <style>
     .gradient-custom {
         background: #6a11cb;
-        background: -webkit-linear-gradient(to right, #cb356b, #bd3f32);
-        background: linear-gradient(to right, #cb356b, #bd3f32)
+        background: -webkit-linear-gradient(to right, #667eea, #764ba2);
+        background: linear-gradient(to right, #667eea, #764ba2)
     }
 
     body {
         background: #6a11cb;
-        background: -webkit-linear-gradient(to right, #cb356b, #bd3f32);
-        background: linear-gradient(to right, #cb356b, #bd3f32)
+        background: -webkit-linear-gradient(to right, #667eea, #764ba2);
+        background: linear-gradient(to right, #667eea, #764ba2)
       }
       .title {
        
@@ -96,27 +96,11 @@
               </li>
           </ul>
         </div>
-        <div class="d-flex align-items-center">
-          {% for user in users %}
-            {% if user.userEmail == request.session.email %}
-              <a href="{% url 'profile' %}">
-                <img
-                src="{{ user.userImage }}"
-                class="rounded-circle"
-                height="45"
-                width="48"
-                alt="User Image"
-                loading="lazy"
-                />
-              </a>  
-            {% endif %}
-          {% endfor %}
-        </div>
       </nav>
       
       <section class="vh-100" style="background-color:gradient-custom">
-          {% for user in user %}
-      
+          {% for user in users %}
+
               <div class="container py-5 h-100">
                 <div class="row d-flex justify-content-center align-items-center h-100">
                   <div class="col col-md-9 col-lg-7 col-xl-5">
@@ -139,22 +123,26 @@
                               </div>
                               <div class="px-3">
                                 <p class="small text-muted mb-1">Followers</p>
-                                <p class="mb-0">0</p>
+                                <p class="mb-0">{{ followers_count }}</p>
                               </div>
                               <div>
                                 <p class="small text-muted mb-1">Rating</p>
-                                <p class="mb-0">0</p>
+                                <p class="mb-0">{{ avg }}</p>
                               </div>
                             </div>
                             <div class="d-flex pt-1">
-                                  <form action="{% url 'follow' user.user_id %}" method="post">
-                                      {% csrf_token %}
-                                      {% if user.user_id in  user.followers%}
-                                          <button type="submit" class="btn btn-danger">Unfollow</button>
-                                      {% else %}
-                                          <button type="submit" class="btn btn-primary">Follow</button>
-                                      {% endif %}
+                              {% if loggedUser in user_profile.followers.all %}
+                                  <form action="{% url 'unfollow' user.user_id %}" method="post">
+                                  {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">Unfollow</button>
                                   </form>                       
+                              {% else %}
+                                  <form action="{% url 'follow' user.user_id %}" method="post">
+                                  {% csrf_token %}
+                                    {{user.user_profile.followers.all}}
+                                    <button type="submit" class="btn btn-primary">Follow</button>
+                                  </form> 
+                              {% endif %}
                               <!-- <button type="button" class="btn btn-primary flex-grow-1">Follow</button> -->
                             </div>
                           </div>
@@ -164,10 +152,10 @@
                   </div>
                 </div>
               </div>
-      
+
           {% endfor %}
 
-       
+       </section>
 </body>
 </html>
 

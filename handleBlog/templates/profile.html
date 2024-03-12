@@ -119,7 +119,7 @@
         <!-- Profile -->
         <section class="vh-100" style="background-color:gradient-custom">
           {% for user in users %}
-            {% if user.userEmail == request.session.email %}
+            
               <div class="container py-5 h-100">
                 <div class="row d-flex justify-content-center align-items-center h-100">
                   <div class="col col-md-9 col-lg-7 col-xl-5">
@@ -137,16 +137,17 @@
                             <div class="d-flex justify-content-start rounded-3 p-2 mb-2"
                               style="background-color: #efefef;">
                               <div>
+
                                 <p class="small text-muted mb-1">Following</p>
-                                <p class="mb-0">41</p>
+                                <p class="mb-0">0</p>
                               </div>
                               <div class="px-3">
                                 <p class="small text-muted mb-1">Followers</p>
-                                <p class="mb-0">976</p>
+                                <p class="mb-0">{{ followers_count }}</p>
                               </div>
                               <div>
-                                <p class="small text-muted mb-1">Rating</p>
-                                <p class="mb-0">8.5</p>
+                                <p class="small text-muted mb-1">Ratings</p>
+                                <p class="mb-0">{{ avg }}</p>
                               </div>
                             </div>
                             <!-- <div class="d-flex pt-1">
@@ -160,7 +161,7 @@
                   </div>
                 </div>
               </div>
-            {% endif %}
+
           {% endfor %}
         </section>
 </body>
