@@ -47,6 +47,7 @@ def register(request):
     return render(request,'register.html')
 
 
+
 def login(request):
 
     if request.method == 'POST':    
@@ -60,21 +61,22 @@ def login(request):
 
         user = request.user
 
-        if CustomUser.objects.filter(userEmail=userEmail).exists() and check_password(userPassword, loginUser.userPassword) and loginUser.is_active == True:  
-            request.session['email'] = userEmail
-            return redirect('home')
+        if CustomUser.objects.filter(userEmail=userEmail).exists() and check_password(userPassword, loginUser.userPassword):  
+            if loginUser.is_active == True:
+                request.session['email'] = userEmail
+                return redirect('home')
+            else:
+                message = "You are De-activated..!!"
+                return render(request, "login.html", {'message':message})
         elif User.objects.filter(email=user.email).exists() and check_password(userPassword, request.user.password):
             request.session['email'] = user.email
             return redirect('adminDash')
         else:
-            if loginUser.is_active == False:
-                message = "You are De-activated..!!"
-                return render(request, "login.html", {'message':message})
-            else:
-                message = "Either Your Email Address or Password is incorrect...!!!"
-                return render(request, "login.html", {'message':message})
-                   
+            message = "Either Your Email Address or Password is incorrect...!!!"
+            return render(request, "login.html", {'message':message})
+                
     return render(request, 'login.html')
+
 
 
 # @login_required
@@ -88,6 +90,7 @@ def adminDash(request):
         return redirect('login')
 
 
+
 # @login_required
 def handleUser(request):
     user_email = request.session.get('email')
@@ -98,6 +101,7 @@ def handleUser(request):
         return redirect('login')
 
 
+
 # @login_required
 def userDeactivate(request, id):
     user = get_object_or_404(CustomUser, user_id=id)
@@ -105,11 +109,14 @@ def userDeactivate(request, id):
     user.save()
     return redirect(handleUser)
 
+
+
 def userActivate(request, id):
     user = get_object_or_404(CustomUser, user_id=id)
     user.is_active = True
     user.save()
     return redirect(handleUser)
+
 
 
 # @login_required
@@ -127,6 +134,7 @@ def home(request):
         return redirect('login')
 
 
+
 # @login_required
 def myBlog(request):
     user_email = request.session.get('email')
@@ -139,6 +147,8 @@ def myBlog(request):
         return render(request,'myBlog.html', {'myblogs':myblogs, 'loggedUser':loggedUser})
     else:
         return redirect('login')
+
+
 
 # @login_required
 def addContent(request):
@@ -169,6 +179,7 @@ def addContent(request):
         return redirect('login')
 
 
+
 # @login_required
 def changePass(request):
 
@@ -196,6 +207,7 @@ def changePass(request):
         return render(request, 'changePass.html', {'users':users})
     else:
         return redirect('login')
+
 
 
 # @login_required
@@ -235,6 +247,7 @@ def resetPass(request, token):
         return redirect('login')
 
 
+
 # @login_required
 def addComment(request, pk):
     user_email = request.session.get('email')
@@ -260,6 +273,7 @@ def addComment(request, pk):
         return redirect('login')
 
 
+
 def addRating(request, pk):
     user_email = request.session.get('email')
     if user_email:
@@ -281,10 +295,13 @@ def addRating(request, pk):
         return redirect('login')     
 
 
+
 # @login_required
 def logout(request):
     del request.session['email']
     return redirect('login')
+
+
 
 def profile(request):
     user_email = request.session.get('email')
@@ -293,7 +310,7 @@ def profile(request):
         user = get_object_or_404(CustomUser, userEmail=user_email)
         user_profile = get_object_or_404(UserProfile, user=user)
         followers_count = user_profile.followers.count()
-
+        Logged_user_followings = UserProfile.objects.filter(followers=user)
         avg_rating = Rating.objects.filter(blog_id__user_id=user)
         j=0
         count = 0
@@ -305,10 +322,11 @@ def profile(request):
         else:
             x=0
         avg = round(x, 2)
-
-        return render(request, 'profile.html', {'users': users, 'followers_count':followers_count, 'avg':avg })
+        followings = Logged_user_followings.count()
+        return render(request, 'profile.html', {'users': users, 'followers_count':followers_count, 'avg':avg, 'followings':followings })
     else:
         return redirect('login')
+
 
 
 def profile_detail(request, user_id):
@@ -319,6 +337,7 @@ def profile_detail(request, user_id):
         user = get_object_or_404(CustomUser, user_id=user_id)  
         user_profile, created = UserProfile.objects.get_or_create(user=user)
         followers_count = user_profile.followers.count()
+        user_followings = UserProfile.objects.filter(followers=user)
         avg_rating = Rating.objects.filter(blog_id__user_id=user)
         j=0
         count = 0
@@ -330,10 +349,13 @@ def profile_detail(request, user_id):
         else:
             x=0
         avg = round(x, 2)
-
-        return render(request, 'profile_detail.html', {'users': users, 'user_profile':user_profile, 'loggedUser':loggedUser, 'followers_count':followers_count, 'avg':avg })
+        followings = user_followings.count()
+        print('followings', followings)
+        return render(request, 'profile_detail.html', {'users': users, 'user_profile':user_profile, 'loggedUser':loggedUser, 'followers_count':followers_count, 'avg':avg, 'followings':followings })
     else:
         return redirect('login')
+
+
 
 def follow(request, user_id):
     user_email = request.session.get('email')
@@ -345,6 +367,8 @@ def follow(request, user_id):
         return redirect('profile_detail', user_id=user_id)
     else:
         return redirect('login')
+
+
 
 def unfollow(request, user_id):
     user_email = request.session.get('email')
