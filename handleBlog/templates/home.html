@@ -153,7 +153,7 @@
             <div class="col-md-7 px-3">
               <div class="card-block px-6">
               <form action="{% url 'addComment' pk=blog.blog_id %}" method="post">
-                {% csrf_token%}
+                {% csrf_token %}
                 <h5 class="card-title">Comments</h5>
                   <div class="form-floating w-100">
                     <textarea class="form-control" name='commentContent' id="textAreaExample" rows="4" style="background: #fff;" required></textarea>
@@ -233,7 +233,7 @@
             {% for comment in comments %}
             {% if comment.blog_id.blog_id == blog.blog_id %}
             <div class="card-block px-6 ">
-                <div class="d-flex justify-content-between align-items-center font-bold"> 
+                <div class="d-flex justify-content-between aln-items-center font-bold"> 
                     <p class="mb-1">
                         {{ comment.commentersName }} <span class="small">{{ comment.commentDate }}</span>
                     </p>

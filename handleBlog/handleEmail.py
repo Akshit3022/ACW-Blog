@@ -10,9 +10,11 @@ def sendForgetPassMail(userEmail, token):
 
     try:
         subject = "Your forget password link"
-        message = f"Hi {user.userName},\n\nPlease click on the following link to reset your password:\n\nhttp://127.0.0.1:8000/resetPassword/{token}\n\nIf you did not make this request, please ignore this email and your password will remain unchanged.\n\nRegards,\nYudiz"
+        message = "Hi"
+        # message = f"Hi {user.userName},\n\nPlease click on the following link to reset your password:\n\nhttp://127.0.0.1:8000/resetPassword/{token}\n\nIf you did not make this request, please ignore this email and your password will remain unchanged.\n\nRegards,\nYudiz"
         from_email = settings.EMAIL_HOST_USER
-        recipient_list = [userEmail]
+        print("fromEmail--", from_email)
+        recipient_list = (userEmail,)
         print("receiverList--", recipient_list)
         send_mail(subject, message, from_email, recipient_list)    
         print("Please")

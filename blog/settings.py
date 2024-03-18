@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+from dotenv import load_dotenv
 import os
 from pathlib import Path
 
@@ -133,14 +133,20 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'handleBlog/images')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Email
+
+load_dotenv()
+
+SECRET_KEY = os.getenv('SECRET_KEY')
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'rarerabbit747@gmail.com'
-EMAIL_HOST_PASSWORD = 'RARE9999'
+EMAIL_HOST_USER = 'akshit.chauhan@yudiz.com'
+EMAIL_HOST_PASSWORD = 'SECRET_KEY'
+MAIL_USE_SSL = True
 # DEFAULT_FROM_EMAIL = 'your_email@example.com'
 
 
-# login_required
+# login_required    
 # LOGIN_URL = ''
